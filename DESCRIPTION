@@ -4,12 +4,27 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Florence", "Mounier", , "florence.mounier@inrae.fr", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-8916-7007"))
-Description: Exploring the quadrige database for the Gironde, Loire, and Seine estuaries.
+Description: Exploring the quadrige database for the Gironde, Loire, and
+    Seine estuaries.
 License: MIT + file LICENSE
+Depends: 
+    R (>= 3.5)
 Imports: 
     config,
+    dplyr,
+    ggplot2,
     golem,
-    shiny
+    pkgload,
+    plotly,
+    shiny,
+    shinyjs
+Suggests: 
+    knitr,
+    rmarkdown,
+    tidyverse,
+    usethis
+VignetteBuilder: 
+    knitr
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.3.2

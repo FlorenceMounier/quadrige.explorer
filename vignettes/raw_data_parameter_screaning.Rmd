@@ -1,0 +1,226 @@
+---
+title: "parameter_screaning"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{parameter_screaning}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(quadrige.explorer)
+library(tidyverse)
+
+`%!in%` = Negate(`%in%`)
+```
+
+## Exploration level 1: THEME
+
+```{r}
+data <- quadrige.explorer::sextant_outputs
+data |> distinct(THEME)
+```
+No time series of interest in the following themes: 
+
+- Déchets marin
+- Microbiologie
+- Contaminants chimiques et écotoxicologie;Phytoplancton, hydrologie et phycotoxines
+
+Themes of interest:
+
+- Benthos dont récif corallien
+- Contaminants chimiques et écotoxicologie
+- Phytoplancton, hydrologie et phycotoxines
+- Autres
+
+## Exploration level 2: "Benthos dont récif corallien"
+
+```{r}
+data |> 
+  filter(THEME == "Benthos dont récif corallien") |> 
+  distinct(PARAMETRE_GROUPE)
+```
+
+No time series of interest in the following PARAMETRE_GROUPE: 
+
+- Mesures physiques
+- Mesures physiques/Matériel particulaire
+- Physicochimie/Organiques majeurs			
+- Physicochimie
+
+Parameter group of interest:
+
+- Biologie > Nombre d'individus d'état non précisé
+
+### Exploration level 3: "Biologie"
+```{r}
+data |> 
+  filter(THEME == "Benthos dont récif corallien",
+         PARAMETRE_GROUPE == "Biologie") |> 
+  distinct(PROGRAMME)
+```
+No time series of interest in the following PROGRAMME: 
+
+- BLOOMS
+- REEHAB: only 2020
+- REBENT_HZN: zostera presence/absence => not relevant for estuaries
+- REBENT_ALG: 2010-2023 coastal algaes => not relevant for estuaries
+
+PROGRAMME of interest:
+- REBENT_FAU: 2007-2023		
+
+### Exploration level 4: "REBENT_FAU"
+
+```{r}
+data |> 
+  filter(THEME == "Benthos dont récif corallien",
+         PARAMETRE_GROUPE == "Biologie",
+         PROGRAMME == "REBENT_FAU") |> 
+  distinct(PARAMETRE_LIBELLE)
+```
+No time series of interest in the following PARAMETRE_LIBELLE:
+
+- Azoïque (prélèvement-échantillon azoïque)
+- Présence - Absence d'un taxon
+
+PARAMETRE_LIBELLE of interest:
+
+- Nombre d'individus d'état non précisé
+
+### Exportation "data_benthos.rda"
+```{r}
+data_benthos <- data |> 
+  filter(THEME == "Benthos dont récif corallien",
+         PARAMETRE_GROUPE == "Biologie",
+         PROGRAMME == "REBENT_FAU",
+         PARAMETRE_LIBELLE == "Nombre d'individus d'état non précisé") |> 
+  select(- c(THEME, PARAMETRE_GROUPE, PROGRAMME, PARAMETRE_LIBELLE))
+
+usethis::use_data(data_benthos, overwrite = TRUE)
+```
+
+
+## Exploration level 2: "Contaminants chimiques et écotoxicologie"
+
+```{r}
+data |> 
+  filter(THEME == "Contaminants chimiques et écotoxicologie") |> 
+  distinct(PARAMETRE_GROUPE)
+```
+
+### No time series of interest in the following PARAMETRE_GROUPE: 
+
+- Biologie
+- Contaminants
+- Contaminants/Antioxydants
+- Contaminants/Biocides
+- Contaminants/Cosmétiques
+- Contaminants/Hydrocarbures général > "Hydrocarbures totaux" REPOMS (1997-2014)
+- Contaminants/Médicaments > ETUDE_PROSPECTIVE_DCE_2012 (screaning for one date)
+- Contaminants/Organophosphorés > CHIMIE_EAU_AGENCESEAU 2009 (screaning for one date)
+- Contaminants/Pesticides > ETUDE_PROSPECTIVE_DCE_2012 (screaning for one date)
+- Contaminants/Plastifiants	> ETUDE_PROSPECTIVE_DCE_2012 (screaning for one date)
+- Contaminants/Tensioactifs > ETUDE_PROSPECTIVE_DCE_2012 (screaning for one date)
+- Mesures physiques/Matériel particulaire > size fractions of sediment from ROCCHSED
+- Minéralogie
+- Nutriments/Nutriments Organiques > REPOMS
+- Nutriments/Nutriments totaux > REPOMS
+- Physicochimie
+- Physicochimie/Organiques majeurs			
+- Physicochimie/Inorganiques majeurs
+- Radioéléments - Datations > Uranium, Thallium
+- Toxico et Ecotoxicologie > ROCCHSED "Pourcentage net moyen de larves normales" 1 point = 95%
+
+### Parameters of interest for ROCCHMV program and EQS for biota:
+
+```{r}
+data |>
+  filter(
+    THEME == "Contaminants chimiques et écotoxicologie",
+    PROGRAMME == "ROCCHMV",
+    PARAMETRE_LIBELLE %in% c(
+      
+      # PARAMETRE_GROUPE: Mesures physiques
+      "Matière sèche",
+      "Taille de l'individu",
+      
+      # PARAMETRE_GROUPE: Toxico et Ecotoxicologie/Chimie-biochimie
+      "Lipides totaux",
+      
+      # PARAMETRE_GROUPE: Contaminants/Hydrocarbures PAH
+      "Anthracène", "Benzo(a)anthracène", "Benzo(a)pyrène", "Benzo(g,h,i)pérylène",
+      "Fluoranthène", "Naphtalène", "Phénanthrène", "Pyrène", 
+      
+      # PARAMETRE_GROUPE: Contaminants/Métaux et métalloïdes
+      "Mercure", "Cadmium", "Plomb", "Zinc", "Cuivre",
+      "Nickel", "Vanadium", "Argent", "Chrome total",
+      
+      # PARAMETRE_GROUPE: Contaminants/Organiques autres
+      "4-nonylphenols ramifiés", "Diéthylhexylphtalate (DEHP ou DOP)",
+      
+      # PARAMETRE_GROUPE: Organohalogénés
+        # PCBs
+        "CB 28", "CB 52", "CB 101", "CB 118", "CB 138", "CB 153", "CB 180",
+        # PBDE
+        "PBDE 28", "PBDE 47", "PBDE 99", "PBDE 100", "PBDE 153", "PBDE 154",
+        # DL-compounds: 12 DL-PCB
+        "CB 77", "CB 81", "CB 105", "CB 114", "CB 118", "CB 123", 
+        "CB 126", "CB 156", "CB 157", "CB 167", "CB 169", "CB 189",
+        # DL-compounds: 7 polychlorinated dibenzo-p-dioxins (PCDDs)
+        "2,3,7,8-tetrachlorodibenzo-p-dioxine", 
+        "1,2,3,7,8-pentachlorodibenzo-p-dioxine",
+        "1,2,3,4,7,8-hexachlorodibenzo-p-dioxine",
+        "1,2,3,6,7,8-hexachlorodibenzo-p-dioxine",
+        "1,2,3,7,8,9-hexachlorodibenzo-p-dioxine", 
+        "1,2,3,4,6,7,8- heptachlorodibenzo-p-dioxine", 
+        "octachlorodibenzo-p-dioxine", # OCDD 1,2,3,4,6,7,8,9-O8CDD
+        # DL-compounds: 10 polychlorinated dibenzofurans (PCDFs)
+        "2,3,7,8-tetrachlorodibenzofuran", 
+        "1,2,3,7,8-pentachlorodibenzofuran",
+        "2,3,4,7,8-pentachlorodibenzofuran",
+        "1,2,3,4,7,8-hexachlorodibenzofuran",
+        "1,2,3,6,7,8-hexachlorodibenzofuran",
+        "1,2,3,7,8,9-hexachlorodibenzofuran",
+        "2,3,4,6,7,8-hexachlorodibenzofuran",
+        "1,2,3,4,6,7,8-heptachlorodibenzofuran",
+        "1,2,3,4,7,8,9-heptachlorodibenzofuran",
+        "octachlorodibenzofuranne", # OCDF 1,2,3,4,6,7,8,9-O8CDF
+        # HBCDD: 3 isomers
+        "Alpha-HBCDD", "Beta-HBCDD", "Gamma-HBCDD",
+        # Organochlorine pesticides
+        "Gamma-HCH", "p,p'-DDT", "o,p'-DDT", "p,p'-DDE", "p,p'-DDD",
+      
+      # PARAMETRE_GROUPE: Contaminants/Organométaux
+      "Tributylétain cation",
+      
+      # PARAMETRE_GROUPE: Contaminants/Perfluorés (PFC)	
+      "PFOS"
+    )
+  ) |>
+  distinct(PARAMETRE_GROUPE, PARAMETRE_LIBELLE) |> 
+  arrange(PARAMETRE_GROUPE)
+
+```
+
+## Exploration level 2: "Phytoplancton, hydrologie et phycotoxines"
+
+```{r}
+data |> 
+  filter(THEME == "Phytoplancton, hydrologie et phycotoxines") |> 
+  distinct(PARAMETRE_GROUPE)
+```
+
+## Exploration level 2: "Autres"
+
+```{r}
+data |> 
+  filter(THEME == "Autres") |> 
+  distinct(PARAMETRE_GROUPE)
+```
