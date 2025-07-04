@@ -141,7 +141,7 @@ data |>
 ### Parameters of interest for ROCCHMV program and EQS for biota:
 
 ```{r}
-data |>
+data_contamination <- data |>
   filter(
     THEME == "Contaminants chimiques et écotoxicologie",
     PROGRAMME == "ROCCHMV",
@@ -203,18 +203,71 @@ data |>
       # PARAMETRE_GROUPE: Contaminants/Perfluorés (PFC)	
       "PFOS"
     )
-  ) |>
-  distinct(PARAMETRE_GROUPE, PARAMETRE_LIBELLE) |> 
-  arrange(PARAMETRE_GROUPE)
+  )
 
 ```
+
+### Exportation "data_contamination.rda"
+```{r}
+usethis::use_data(data_contamination, overwrite = TRUE)
+```
+
 
 ## Exploration level 2: "Phytoplancton, hydrologie et phycotoxines"
 
 ```{r}
 data |> 
   filter(THEME == "Phytoplancton, hydrologie et phycotoxines") |> 
-  distinct(PARAMETRE_GROUPE)
+  distinct(PARAMETRE_GROUPE) |> arrange(PARAMETRE_GROUPE)
+```
+
+### No time series of interest in the following PARAMETRE_GROUPE: 
+
+- Contaminants/Métaux et métalloïdes > 1975-1995, same as in biota
+- Contaminants/Organiques autres > 1975-1995 Phtalates	
+- Microbiologie	> sanitary
+- Microbiologie/Bactéries tests	> sanitary		
+- Minéralogie > not interesting for nursery quality
+- Nutriments/Nutriments totaux > only for Loire estuary
+- Phycotoxines/Phycotoxines ASP	> sanitary	
+- Phycotoxines/Phycotoxines PSP	> sanitary	
+- Phycotoxines/Phycotoxines lipophiles > sanitary
+- Physicochimie/Inorganiques majeurs > fluorures
+- Physicochimie/Organiques majeurs > Carbone organique (not in Seine)
+
+### Parameters of interest:
+
+```{r}
+data_phyto <- data |>
+  filter(
+    THEME == "Phytoplancton, hydrologie et phycotoxines",
+    PARAMETRE_LIBELLE %in% c(
+      
+      # PARAMETRE_GROUPE: Biologie/Phytoplancton
+      "Chlorophylle a", "Phéopigments", # > production primaire
+      
+      # PARAMETRE_GROUPE: Mesures physiques	
+      "Température de l'eau",
+      
+      # PARAMETRE_GROUPE: Mesures physiques/Matériel particulaire
+      "Turbidité",
+      "Turbidité FNU",
+      "Matière en suspension",
+      
+      # PARAMETRE_GROUPE: Nutriments/Nutriments Inorganiques
+      "Silicate", # RNOHYD (1975-2016) + REPHY (2007-2024)
+      "Ammonium", "Azote nitreux (nitrite)", "Azote nitrique (nitrate)",
+      "Nitrate + nitrite", "Phosphate",
+      
+      # PARAMETRE_GROUPE: Physicochimie
+      "Oxygène dissous", "pH", "Salinité"
+    )
+  )
+```
+
+### Exportation "data_phyto.rda"
+```{r}
+usethis::use_data(data_phyto, overwrite = TRUE)
 ```
 
 ## Exploration level 2: "Autres"
@@ -223,4 +276,18 @@ data |>
 data |> 
   filter(THEME == "Autres") |> 
   distinct(PARAMETRE_GROUPE)
+```
+
+### No time series of interest in the following PARAMETRE_GROUPE: 
+
+### PROGRAMME of interest: 
+
+```{r}
+data_pomet <- data |>
+  filter(PROGRAMME == "POMET")
+```
+
+### Exportation "data_pomet.rda"
+```{r}
+usethis::use_data(data_pomet, overwrite = TRUE)
 ```
