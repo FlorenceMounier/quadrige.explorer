@@ -5,7 +5,7 @@ account: florencemounier
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 15016753
-bundleId: 10564006
+bundleId: 10564801
 url: https://florencemounier.shinyapps.io/quadrige/
 version: 1
 asMultiple: FALSE
