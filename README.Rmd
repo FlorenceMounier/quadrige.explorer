@@ -23,8 +23,8 @@ output: github_document
 
 You can install the development version of `{quadrige.explorer}` like so:
 
-```{r}
-# FILL THIS IN! HOW CAN PEOPLE INSTALL YOUR DEV PACKAGE?
+```{r, eval = FALSE}
+install_github("FlorenceMounier/quadrige.explorer")
 ```
 
 ## Run
@@ -49,12 +49,4 @@ Here are the tests results and package coverage:
 
 ```{r, error = TRUE}
 devtools::check(quiet = TRUE)
-```
-
-```{r echo = FALSE}
-unloadNamespace("quadrige.explorer")
-```
-
-```{r, error = TRUE}
-covr::package_coverage()
 ```

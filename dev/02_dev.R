@@ -21,6 +21,12 @@ attachment::att_amend_desc()
 ## Global variables ----
 checkhelper::print_globals(quiet = TRUE)
 
+## Add internal datasets ----
+## If you have data in your package
+usethis::use_data_raw(name = "sextant_outputs")
+usethis::use_data()
+checkhelper::use_data_doc()
+
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module(name = "exploration_raw_data")
@@ -37,10 +43,6 @@ golem::add_module(name = "exploration_raw_data")
 # golem::add_css_file("custom")
 # golem::add_sass_file("custom")
 # golem::add_any_file("file.json")
-
-## Add internal datasets ----
-## If you have data in your package
-usethis::use_data_raw(name = "sextant_outputs")
 
 ## Tests ----
 ## Add one line by test you want to create
