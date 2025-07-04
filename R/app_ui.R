@@ -14,6 +14,10 @@ app_ui <- function(request) {
       tabPanel(
         title = "Raw data",
         mod_exploration_raw_data_ui("raw_data")
+      ),
+      tabPanel(
+        title = "Contamination",
+        mod_exploration_data_contamination_ui("data_contamination")
       )
     )
   )

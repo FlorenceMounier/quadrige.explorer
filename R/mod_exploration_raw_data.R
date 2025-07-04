@@ -39,7 +39,7 @@ mod_exploration_raw_data_server <- function(id){
     ns <- session$ns
 
     # ----------------------------------------------------------------------
-    # Chargement des données
+    # Load data
 
     data <- quadrige.explorer::sextant_outputs
 
@@ -133,7 +133,7 @@ mod_exploration_raw_data_server <- function(id){
         ns("taxon"), "Taxon :",
         choices = taxons_disponibles,
         selected = taxons_disponibles[1],
-        multiple = TRUE  # on autorise la sélection multiple
+        multiple = TRUE  # multiple selection
       )
     })
 

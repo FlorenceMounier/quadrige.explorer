@@ -30,6 +30,7 @@ checkhelper::use_data_doc()
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module(name = "exploration_raw_data")
+golem::add_module(name = "exploration_data_contamination")
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*
